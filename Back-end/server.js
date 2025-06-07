@@ -1,4 +1,4 @@
-import express from "express";
+import express, { urlencoded } from "express";
 import connectDB from "./DB/DB.connection.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -7,11 +7,15 @@ const port = 3000 || process.env.PORT;
 
 const app = express();
 
-// simple route
-app.get("/",(req,res)=>{
-res.send("Welcome to the Express.js server!");
-})
+// Middleware to parse JSON request bodies
+app.use(express.json());
 
+// Middleware to parse URL-encoded form data
+app.use(express.urlencoded({ extended: true }));
+
+// define the routes
+import user from './Routes/user.routes.js'
+app.use('/api/v1',user)
 
 // listen the server
 app.listen(port, () => {
