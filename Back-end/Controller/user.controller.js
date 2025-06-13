@@ -72,6 +72,34 @@ const updateUser = async (req, res) => {
       res.status(500).json({ message: "User Updation failed", success: false });
     }
   };
+
+// delete use 
+const deleteUser = async (req,res)=>{
+  const {id} = req.params
+  try {
+    const userWithId = await User.findByIdAndDelete(id)
+
+    // checking 
+    if(!userWithId){
+      res.status(400).json({
+        message:`No user id with with id : ${userWithId}`,
+      })
+    }
+
+    console.log("user deletion success")
+    res.status(200).json({
+      message:"User Deletion operation success",
+      success:true,
+      userWithId
+    })
+  } catch (error) {
+    console.log("Error while deleting user")
+    res.status(401).json({
+      message:"User deletion operation failed",
+      success:false
+    })
+  }
+}
   
 
-export { createUser, updateUser };
+export { createUser, updateUser ,deleteUser};
