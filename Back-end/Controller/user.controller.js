@@ -1,7 +1,7 @@
 import User from "../Model/users.model.js";
 import mongoose from "mongoose"
 
-// create new user
+// CREATE new user
 const createUser = async (req, res) => {
   // get details
   const { name, email, address, proof } = req.body;
@@ -41,7 +41,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// update user
+// UPDATE user
 const updateUser = async (req, res) => {
     const { id } = req.params;
     console.log(id)
@@ -73,7 +73,7 @@ const updateUser = async (req, res) => {
     }
   };
 
-// delete use 
+// DELETE user
 const deleteUser = async (req,res)=>{
   const {id} = req.params
   try {
@@ -100,6 +100,34 @@ const deleteUser = async (req,res)=>{
     })
   }
 }
+
+// GET all user
+const getAllUsers = async (req,res)=>{
+  try {
+    const users = await User.find().sort({createdAt:-1})
+    
+    // validation
+    if (!users) {
+      res.status(400).json({
+        message: "Users are not in database",
+        success: false,
+      });
+    }
+
+    // send all users
+    res.status(200).json({
+      message:"All users",
+      success:true,
+      users
+    })
+
+  } catch (error) {
+    res.status(401).json({
+      message:"Error while getting all users",
+      success:false,
+    })
+  }
+}
   
 
-export { createUser, updateUser ,deleteUser};
+export { createUser, updateUser ,deleteUser, getAllUsers};
