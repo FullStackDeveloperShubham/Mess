@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Employee from "../Model/employe.model.js";
 
-// CREATE new employee
+// ! CREATE new employee
 const createEmployee = async (req, res) => {
   const { name, address, number, proofId, monthlyPaid } = req.body;
 
@@ -49,7 +49,7 @@ const createEmployee = async (req, res) => {
   }
 };
 
-// UPDATE employee
+// ! UPDATE employee
 const updateEmployee = async (req, res) => {
   const { name, address, number, monthlyPaid } = req.body;
   const { id } = req.params;
@@ -88,4 +88,36 @@ const updateEmployee = async (req, res) => {
   }
 };
 
-export { createEmployee, updateEmployee };
+// ! Aggrigation pipeline for employee totoal payment 
+const getTotalPayment = async (req, res) => {
+  try {
+
+    // ! Aggrigation pipeline to calculate total monthly paid
+    const totalPayment = await Employee.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$monthlyPaid" },
+        },
+      },
+    ]);
+
+    // ! return the response
+    res.status(200).json({
+      message: "Total payment fetched successfully",
+      success: true,
+      totalPayment: totalPayment[0].total,
+    });
+
+  } catch (error) {
+    console.error("Error fetching total payment:", error.message);
+    res.status(500).json({
+      message: "Failed to fetch total payment",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+
+export { createEmployee, updateEmployee  , getTotalPayment};
