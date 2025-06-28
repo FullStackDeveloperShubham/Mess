@@ -19,7 +19,7 @@ app.use('/api/v1',user)
 
 // employee routes
 import employee from "./Routes/employee.route.js"
-app.use('/api/v1/',employee)
+app.use('/api/v1',employee)
 
 // listen the server
 app.listen(port, () => {
