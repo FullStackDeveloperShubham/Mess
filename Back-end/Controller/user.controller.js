@@ -1,10 +1,10 @@
 import User from "../Model/users.model.js";
 import mongoose from "mongoose"
 
-// CREATE new user
+// ! CREATE new user
 const createUser = async (req, res) => {
   // get details
-  const { name, email, address, proof } = req.body;
+  const { name, email, address, proof , userMonthlyPaid } = req.body;
   // console.log(name,email,address,proof)
 
   try {
@@ -22,6 +22,7 @@ const createUser = async (req, res) => {
       email,
       address,
       proof,
+      userMonthlyPaid, // default value is 0
     });
     console.log(newUser);
 
@@ -41,11 +42,11 @@ const createUser = async (req, res) => {
   }
 };
 
-// UPDATE user
+// ! UPDATE user
 const updateUser = async (req, res) => {
     const { id } = req.params;
     console.log(id)
-    const { name, email, address, proof } = req.body;
+    const { name, email, address, proof ,userMonthlyPaid } = req.body;
   
     // Step 1: Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -62,7 +63,7 @@ const updateUser = async (req, res) => {
       // Step 3: Update user
       const updatedUser = await User.findByIdAndUpdate(
         id,
-        { name, email, address, proof },
+        { name, email, address, proof,userMonthlyPaid },
         { new: true }
       );
   
@@ -73,7 +74,7 @@ const updateUser = async (req, res) => {
     }
   };
 
-// DELETE user
+// ! DELETE user
 const deleteUser = async (req,res)=>{
   const {id} = req.params
   try {
@@ -101,7 +102,7 @@ const deleteUser = async (req,res)=>{
   }
 }
 
-// GET all user
+// ! GET all user
 const getAllUsers = async (req,res)=>{
   try {
     const users = await User.find().sort({createdAt:-1})
@@ -128,6 +129,33 @@ const getAllUsers = async (req,res)=>{
     })
   }
 }
+
+// ! Get monthy paid user
+const getMonthlyPaidByAllUsers = async(req,res)=>{
+  console.log("Get monthly paid by all users")
+   try {
+      const response = await User.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalMonthlyPaid: { $sum: "$userMonthlyPaid" },
+          },
+        },
+      ]);
+      const totalMonthlyPaid = response[0].totalMonthlyPaid;
+      res.status(200).json({
+        message: "Total Monthly Paid by all users",
+        success: true,
+        totalMonthlyPaid,
+      });
+   } catch (error) {
+      console.error("Error while getting total monthly paid:", error);
+      res.status(500).json({
+        message: "Error while getting total monthly paid",
+        success: false,
+      });
+   }
+}
   
 
-export { createUser, updateUser ,deleteUser, getAllUsers};
+export { createUser, updateUser ,deleteUser, getAllUsers , getMonthlyPaidByAllUsers};

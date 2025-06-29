@@ -24,6 +24,11 @@ const userSchema = new Schema(
       require: true,
       min: 12,
     },
+    userMonthlyPaid:{
+      type: Number,
+      require: true,
+      default: 0,
+    }
   },
   {
     timestamps: true,
